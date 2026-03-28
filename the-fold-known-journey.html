@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Fold — KNOWN Journey</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-bg: #0a0a0a;
+            --bg-elevated: #111111;
+            --bg-card: #161616;
+            --warm-white: #fafafa;
+            --white-soft: #e0e0e0;
+            --gold: #D4A843;
+            --accent: #FF6240;
+            --accent-glow: rgba(255, 98, 64, 0.15);
+            --sage: #6f8d81;
+            --text-muted: #888888;
+            --radius: 16px;
+            --radius-sm: 8px;
+            --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            color: var(--warm-white);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #app {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+
+        .screen {
+            min-height: 100vh;
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.8s var(--ease) forwards;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .landing {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #0a0a0a 0%, #111111 100%);
+        }
+
+        .gate-icon {
+            width: 120px;
+            height: 140px;
+            margin: 2rem 0 3rem;
+            animation: gateGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes gateGlow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(255, 98, 64, 0.3)); }
+            50% { filter: drop-shadow(0 0 40px rgba(255, 98, 64, 0.6)); }
+        }
+
+        .landing h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .landing .subtitle {
+            font-size: 1.2rem;
+            color: var(--warm-white);
+            margin-bottom: 0.5rem;
+            font-weight: 300;
+        }
+
+        .landing .church-name {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-primary {
+            padding: 1rem 2.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: var(--accent);
+            color: var(--warm-white);
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.3s var(--ease);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 8px 24px rgba(255, 98, 64, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 12px 32px rgba(255, 98, 64, 0.4);
+        }
+
+        .hub {
+            padding: 2rem 1.5rem;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hub-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hub-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .hub-header .tagline {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .week-card {
+            background: linear-gradient(135deg, #111111 0%, #161616 100%);
+            border: 1px solid rgba(212, 168, 67, 0.2);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s var(--ease);
+            overflow: hidden;
+        }
+
+        .week-card:hover {
+            border-color: var(--gold);
+            box-shadow: 0 8px 24px rgba(212, 168, 67, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .week-card.active {
+            border-color: var(--gold);
+            background: linear-gradient(135deg, #161616 0%, #1a1a1a 100%);
+        }
+
+        .week-number {
+            font-size: 0.85rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .week-icon {
+            font-size: 2.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .week-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.3rem;
+        }
+
+        .week-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .week-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s var(--ease);
+        }
+
+        .week-card.active .week-content {
+            max-height: 3000px;
+        }
+
+        .content-inner {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(212, 168, 67, 0.2);
+        }
+
+        .scripture-header {
+            background: rgba(111, 141, 129, 0.3);
+            padding: 1rem;
+            border-left: 3px solid var(--gold);
+            margin-bottom: 1.5rem;
+            border-radius: 0.25rem;
+            font-style: italic;
+            font-size: 0.95rem;
+            color: var(--warm-white);
+        }
+
+        .lies-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .lie-item {
+            background: rgba(255, 98, 64, 0.15);
+            border: 1px solid rgba(255, 98, 64, 0.3);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s var(--ease);
+            font-size: 0.9rem;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lie-item:hover {
+            border-color: var(--accent);
+            background: rgba(255, 98, 64, 0.25);
+            transform: scale(1.05);
+        }
+
+        .lie-item.revealed {
+            background: rgba(212, 168, 67, 0.1);
+            border-color: var(--gold);
+            animation: truthReveal 0.6s var(--ease);
+        }
+
+        @keyframes truthReveal {
+            0% {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .lie-text {
+            font-weight: 600;
+            color: var(--warm-white);
+        }
+
+        .truth-text {
+            display: none;
+            font-size: 0.85rem;
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .lie-item.revealed .lie-text {
+            display: none;
+        }
+
+        .lie-item.revealed .truth-text {
+            display: block;
+        }
+
+        .known-section {
+            margin-top: 2rem;
+        }
+
+        .sequence-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: var(--warm-white);
+        }
+
+        .sequence-line {
+            opacity: 0;
+            animation: sequenceFade 0.8s var(--ease) forwards;
+        }
+
+        .sequence-line:nth-child(1) { animation-delay: 0s; }
+        .sequence-line:nth-child(2) { animation-delay: 0.6s; }
+        .sequence-line:nth-child(3) { animation-delay: 1.2s; }
+        .sequence-line:nth-child(4) { animation-delay: 1.8s; }
+
+        @keyframes sequenceFade {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .psalm-ref {
+            font-size: 0.85rem;
+            color: var(--gold);
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+
+        .reflection-prompt {
+            background: rgba(111, 141, 129, 0.2);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+            border-left: 3px solid var(--sage);
+        }
+
+        .reflection-prompt h4 {
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(250, 250, 250, 0.05);
+            border: 1px solid rgba(212, 168, 67, 0.3);
+            border-radius: 0.4rem;
+            color: var(--warm-white);
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+            transition: all 0.3s var(--ease);
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(250, 250, 250, 0.08);
+            box-shadow: 0 0 12px rgba(212, 168, 67, 0.2);
+        }
+
+        .gate-visual {
+            position: relative;
+            height: 300px;
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gate-frame {
+            width: 200px;
+            height: 280px;
+            border: 4px solid #8B6F47;
+            border-radius: 80px 80px 10px 10px;
+            background: linear-gradient(to right, #6B5845, #8B7355);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(212, 168, 67, 0.3);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .gate-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(250, 250, 250, 0.05);
+            border: 1px solid rgba(212, 168, 67, 0.3);
+            border-radius: 0.4rem;
+            color: var(--warm-white);
+            font-family: inherit;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .gate-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 12px rgba(212, 168, 67, 0.2);
+        }
+
+        .burden-list {
+            margin: 1.5rem 0;
+        }
+
+        .burden-item {
+            background: rgba(255, 98, 64, 0.1);
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--accent);
+            animation: burdenAppear 0.4s var(--ease);
+        }
+
+        @keyframes burdenAppear {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .burden-action {
+            background: rgba(212, 168, 67, 0.2);
+            color: var(--gold);
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.3rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .burden-action:hover {
+            background: rgba(212, 168, 67, 0.4);
+        }
+
+        .btn-secondary {
+            padding: 0.9rem 1.8rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: rgba(212, 168, 67, 0.2);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            border-radius: 0.4rem;
+            cursor: pointer;
+            transition: all 0.3s var(--ease);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 168, 67, 0.35);
+            box-shadow: 0 4px 12px rgba(212, 168, 67, 0.25);
+        }
+
+        .speaks-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .speak-card {
+            background: linear-gradient(135deg, #111111 0%, #161616 100%);
+            border: 1px solid rgba(111, 141, 129, 0.35);
+            padding: 1.2rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s var(--ease);
+        }
+
+        .speak-card:hover {
+            border-color: var(--sage);
+            background: linear-gradient(135deg, #161616 0%, #1a1a1a 100%);
+        }
+
+        .speak-card.expanded {
+            border-color: var(--gold);
+            background: linear-gradient(135deg, #1a1a1a 0%, #1e1e1e 100%);
+        }
+
+        .speak-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--warm-white);
+        }
+
+        .speak-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .speak-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s var(--ease);
+            margin-top: 0.5rem;
+        }
+
+        .speak-card.expanded .speak-desc {
+            max-height: 200px;
+            color: var(--warm-white);
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .timer-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 0.9rem;
+            background: rgba(111, 141, 129, 0.3);
+            border: 1px solid rgba(111, 141, 129, 0.6);
+            color: var(--warm-white);
+            border-radius: 0.4rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s var(--ease);
+        }
+
+        .timer-btn.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--dark-bg);
+        }
+
+        .timer-display {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin: 2rem 0;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.1em;
+        }
+
+        .breathing-pulse {
+            animation: breathe 4s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .bold-steps {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-option {
+            background: linear-gradient(135deg, #111111 0%, #161616 100%);
+            border: 2px solid rgba(212, 168, 67, 0.2);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s var(--ease);
+            text-align: center;
+        }
+
+        .step-option:hover {
+            border-color: var(--gold);
+            background: linear-gradient(135deg, #161616 0%, #1a1a1a 100%);
+            transform: translateY(-4px);
+        }
+
+        .step-option.selected {
+            border-color: var(--gold);
+            background: linear-gradient(135deg, #1a1a1a 0%, #1e1e1e 100%);
+            box-shadow: 0 0 20px rgba(212, 168, 67, 0.2);
+        }
+
+        .step-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .step-text {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .custom-step {
+            margin-top: 1.5rem;
+        }
+
+        .custom-step input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(250, 250, 250, 0.05);
+            border: 1px solid rgba(212, 168, 67, 0.3);
+            border-radius: 0.4rem;
+            color: var(--warm-white);
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .custom-step input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 12px rgba(212, 168, 67, 0.2);
+        }
+
+        .recap-title {
+            font-family: 'Space Grotesk', sans-serif;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 2rem 0 1.5rem;
+            color: var(--gold);
+        }
+
+        .recap-lines {
+            background: rgba(111, 141, 129, 0.15);
+            padding: 2rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--gold);
+            margin-bottom: 2rem;
+            line-height: 2;
+            font-size: 1.05rem;
+        }
+
+        .recap-line {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .recap-line strong {
+            color: var(--gold);
+        }
+
+        .recap-line::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+        }
+
+        .final-declaration {
+            background: linear-gradient(135deg, rgba(212, 168, 67, 0.1) 0%, rgba(255, 98, 64, 0.1) 100%);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--warm-white);
+            border: 1px solid rgba(212, 168, 67, 0.3);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .footer {
+            background: rgba(10, 10, 10, 0.85);
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(212, 168, 67, 0.1);
+            margin-top: auto;
+        }
+
+        .btn-nav {
+            padding: 0.8rem 1.5rem;
+            background: rgba(212, 168, 67, 0.15);
+            border: 1px solid rgba(212, 168, 67, 0.4);
+            color: var(--gold);
+            border-radius: 0.4rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s var(--ease);
+        }
+
+        .btn-nav:hover {
+            background: rgba(212, 168, 67, 0.25);
+            transform: translateY(-2px);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .landing h1 {
+                font-size: 2.5rem;
+            }
+
+            .week-card {
+                padding: 1.2rem;
+            }
+
+            .lies-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timer-controls {
+                flex-direction: column;
+            }
+
+            .timer-btn {
+                min-width: auto;
+            }
+        }
+
+        svg {
+            filter: drop-shadow(0 0 15px rgba(255, 98, 64, 0.3));
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- LANDING SCREEN -->
+        <div id="landing" class="screen active landing">
+            <svg class="gate-icon" viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 20 130 L 20 50 Q 20 20 50 20 Q 80 20 80 50 L 80 130" stroke="#FF6240" stroke-width="8" fill="none" stroke-linecap="round"/>
+                <line x1="50" y1="40" x2="50" y2="100" stroke="#fafafa" stroke-width="4" stroke-linecap="round"/>
+                <line x1="35" y1="65" x2="65" y2="65" stroke="#fafafa" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+            <h1>THE FOLD</h1>
+            <p class="subtitle">KNOWN — A Personal Journey</p>
+            <p class="church-name">Shepherd Church Student Ministry</p>
+            <button class="btn-primary" onclick="app.goToHub()">Begin Your Journey</button>
+        </div>
+
+        <!-- JOURNEY HUB -->
+        <div id="hub" class="screen hub">
+            <div class="hub-header">
+                <h2>THE FOLD</h2>
+                <p class="tagline">Four Weeks. One Journey. Discover Who You Really Are.</p>
+            </div>
+
+            <!-- WEEK 1 -->
+            <div class="week-card" onclick="app.toggleWeek(0)">
+                <div class="week-number">Week 1</div>
+                <div class="week-icon">👁️</div>
+                <div class="week-title">KNOWN</div>
+                <div class="week-subtitle">Who Does God Say You Are?</div>
+                <div class="week-content">
+                    <div class="content-inner">
+                        <div class="scripture-header">"I am the good shepherd; I know my sheep and my sheep know me." — John 10:14</div>
+                        <h3 style="color: var(--gold); margin-bottom: 1rem; font-size: 1.2rem;">The Lies We Believe</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">Tap on a lie you've believed about yourself. Watch it break. Discover the truth God says about you.</p>
+                        <div class="lies-grid" id="liesGrid"></div>
+                        <div class="known-section">
+                            <h3 style="color: var(--gold); margin-bottom: 1rem; font-size: 1.2rem;">Known From the Beginning</h3>
+                            <div class="sequence-text" id="sequenceContainer"></div>
+                            <div class="psalm-ref">Psalm 139:13-16</div>
+                            <div class="reflection-prompt">
+                                <h4>Reflect & Write</h4>
+                                <textarea class="text-input" id="week1Reflection" placeholder="Write one thing you now believe about how God sees you..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WEEK 2 -->
+            <div class="week-card" onclick="app.toggleWeek(1)">
+                <div class="week-number">Week 2</div>
+                <div class="week-icon">🚪</div>
+                <div class="week-title">SAFE</div>
+                <div class="week-subtitle">What Are You Carrying?</div>
+                <div class="week-content">
+                    <div class="content-inner">
+                        <div class="scripture-header">"I am the gate; whoever enters through me will be saved." — John 10:9</div>
+                        <h3 style="color: var(--gold); margin-bottom: 1rem; font-size: 1.2rem;">The Gate Exercise</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">What are you carrying? Fears. Shame. Pain. Grief. Lay them at the cross.</p>
+                        <div class="gate-visual">
+                            <div class="gate-frame">✝️</div>
+                        </div>
+                        <input type="text" class="gate-input" id="burdenInput" placeholder="Type a burden, fear, or pain...">
+                        <button class="btn-secondary" onclick="app.addBurden()" style="width: 100%; margin-bottom: 1rem;">Bring It to the Cross</button>
+                        <div class="burden-list" id="burdenList"></div>
+                        <div class="reflection-prompt" style="margin-top: 2rem;">
+                            <h4>Guided Prayer</h4>
+                            <p style="font-size: 0.95rem; line-height: 1.8; margin-bottom: 1rem;"><em>"Jesus, I bring these things to your cross. I don't want to carry them anymore. I lay down every fear, every lie, every hurt. You said your yoke is easy and your burden is light. I trust you with all of it."</em></p>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Matthew 11:28-30</p>
+                            <p style="margin-top: 1rem; font-size: 0.95rem;">Is there something you've been carrying that you didn't type? You don't have to write it here — but tell Jesus about it right now, silently.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WEEK 3 -->
+            <div class="week-card" onclick="app.toggleWeek(2)">
+                <div class="week-number">Week 3</div>
+                <div class="week-icon">👂</div>
+                <div class="week-title">CALLED</div>
+                <div class="week-subtitle">Learning to Listen</div>
+                <div class="week-content">
+                    <div class="content-inner">
+                        <div class="scripture-header">"My sheep hear my voice, and I know them, and they follow me." — John 10:27</div>
+                        <h3 style="color: var(--gold); margin-bottom: 1rem; font-size: 1.2rem;">How God Speaks</h3>
+                        <div class="speaks-cards" id="speaksCards"></div>
+                        <h3 style="color: var(--gold); margin-bottom: 1rem; margin-top: 2rem; font-size: 1.2rem;">Guided Listening Prayer</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.95rem;">Ask Jesus: <em>"What do you want me to know about myself right now?"</em></p>
+                        <div class="timer-controls">
+                            <button class="timer-btn" onclick="app.startTimer(180)">3 Min</button>
+                            <button class="timer-btn" onclick="app.startTimer(300)">5 Min</button>
+                        </div>
+                        <div class="timer-display breathing-pulse" id="timerDisplay" style="display: none;"><span id="timerText">3:00</span></div>
+                        <div id="timerSection" style="display: none;">
+                            <div class="reflection-prompt">
+                                <h4>What Did You Hear?</h4>
+                                <p style="margin-bottom: 1rem; font-size: 0.9rem;">Write down what thoughts came to mind. Even if you're not sure it was God, write it down.</p>
+                                <textarea class="text-input" id="week3Reflection" placeholder="Write what you heard..."></textarea>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem;"><strong>Tip:</strong> If you didn't hear anything, that's okay. Sometimes God speaks later — in a dream, through a friend, or through a verse. Keep your ears open this week.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WEEK 4 -->
+            <div class="week-card" onclick="app.toggleWeek(3)">
+                <div class="week-number">Week 4</div>
+                <div class="week-icon">🧭</div>
+                <div class="week-title">SENT</div>
+                <div class="week-subtitle">Living Bold</div>
+                <div class="week-content">
+                    <div class="content-inner">
+                        <div class="scripture-header">"I have other sheep that are not of this fold. I must bring them also." — John 10:16<br><br>"You will be my witnesses..." — Acts 1:8</div>
+                        <h3 style="color: var(--gold); margin-bottom: 1rem; font-size: 1.2rem;">Your Bold Step</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">This week, I will take ONE bold step for God:</p>
+                        <div class="bold-steps" id="boldSteps"></div>
+                        <div class="custom-step">
+                            <input type="text" id="customStep" placeholder="My own bold step: ...">
+                        </div>
+                        <div class="reflection-prompt" style="margin-top: 2rem;">
+                            <h4>Commissioning Prayer</h4>
+                            <p style="font-size: 0.95rem; line-height: 1.8;"><em>"Jesus, I'm not just staying in the fold — I'm going out. You've shown me who I am. You've taken what I was carrying. You've spoken to me. Now I go. Give me courage. Give me words. Let someone see You through me this week. Amen."</em></p>
+                        </div>
+                        <div style="margin-top: 2rem;">
+                            <h3 style="color: var(--gold); margin-bottom: 1.5rem; font-size: 1.2rem;">Your Journey Recap</h3>
+                            <div class="recap-lines">
+                                <div class="recap-line"><strong>I am KNOWN</strong> by God — He saw me before I was born and calls me by name.</div>
+                                <div class="recap-line"><strong>I am SAFE</strong> in His fold — the cross has taken everything I was carrying.</div>
+                                <div class="recap-line"><strong>I am CALLED</strong> by His voice — my sheep hear my voice, and I know them.</div>
+                                <div class="recap-line"><strong>I am SENT</strong> with His purpose — I have other sheep. I must bring them also.</div>
+                            </div>
+                            <div class="final-declaration">This is who you are.<br>Go live like it.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;">
+                <button class="btn-primary" onclick="app.goToLanding()">Back to Start</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>The Fold — Shepherd Church Student Ministry</p>
+        <p style="margin-top: 0.5rem; font-size: 0.8rem;">KNOWN — A Journey Through The Fold</p>
+    </div>
+    </div>
+
+    <script>
+        const app = {
+            state: {
+                currentScreen: 'landing',
+                expandedWeek: null,
+                timerActive: false,
+                timerInterval: null,
+                timerRemaining: 0,
+                lies: [
+                    { lie: "I'm not good enough", truth: "You are God's masterpiece, created to do good works. (Ephesians 2:10)" },
+                    { lie: "I don't belong", truth: "You are a member of God's family. (Ephesians 2:19)" },
+                    { lie: "I'm not loved", truth: "Nothing can separate you from God's love. (Romans 8:38-39)" },
+                    { lie: "I'm a failure", truth: "You are more than a conqueror through Him. (Romans 8:37)" },
+                    { lie: "I'm not seen", truth: "God saw you before you were born. Every day was written in His book. (Psalm 139:16)" },
+                    { lie: "I'm too much / not enough", truth: "You are fearfully and wonderfully made. (Psalm 139:14)" },
+                    { lie: "Nobody really cares", truth: "Cast your cares on Him, because He cares for you. (1 Peter 5:7)" },
+                    { lie: "I have to earn love", truth: "God showed His love while we were still sinners. (Romans 5:8)" }
+                ],
+                sequence: [
+                    "Before you were born... God knew you.",
+                    "He watched over your formation.",
+                    "Every day of your life was written in His book.",
+                    "You are not an accident. You are intended."
+                ],
+                burdens: [],
+                speaksData: [
+                    { title: "Through Scripture", icon: "📖", desc: "God's Word is alive and active. When a verse jumps out at you, pay attention. (Hebrews 4:12)" },
+                    { title: "Through His Spirit", icon: "💨", desc: "The most common way God speaks is by answering a question you ask Him. He speaks into your mind with a stream of thoughts. (Romans 8:16)" },
+                    { title: "Through Community", icon: "🤝", desc: "God places people in your life who speak truth. That's why The Fold matters. (Proverbs 27:17)" },
+                    { title: "Through Circumstances", icon: "🚪", desc: "God opens and closes doors. He guides your steps even when you can't see the path. (Proverbs 3:5-6)" }
+                ],
+                boldSteps: [
+                    { icon: "👥", text: "Invite someone to The Fold" },
+                    { icon: "🙏", text: "Pray for someone out loud" },
+                    { icon: "💬", text: "Share my story with a friend" },
+                    { icon: "❤️", text: "Do an act of unexpected kindness" }
+                ],
+                selectedBoldStep: null
+            },
+
+            init() {
+                this.renderLies();
+                this.renderSequence();
+                this.renderSpeaksCards();
+                this.renderBoldSteps();
+            },
+
+            goToLanding() {
+                this.switchScreen('landing');
+            },
+
+            goToHub() {
+                this.switchScreen('hub');
+            },
+
+            switchScreen(screenName) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(screenName).classList.add('active');
+                this.state.currentScreen = screenName;
+                document.getElementById('app').scrollTop = 0;
+            },
+
+            toggleWeek(weekIndex) {
+                const weekCards = document.querySelectorAll('.week-card');
+                if (this.state.expandedWeek === weekIndex) {
+                    weekCards[weekIndex].classList.remove('active');
+                    this.state.expandedWeek = null;
+                } else {
+                    weekCards.forEach(card => card.classList.remove('active'));
+                    weekCards[weekIndex].classList.add('active');
+                    this.state.expandedWeek = weekIndex;
+                    setTimeout(() => {
+                        weekCards[weekIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }, 100);
+                }
+            },
+
+            renderLies() {
+                const grid = document.getElementById('liesGrid');
+                grid.innerHTML = this.state.lies.map((lie, idx) => `
+                    <div class="lie-item" onclick="app.revealTruth(this, ${idx})">
+                        <div class="lie-text">${lie.lie}</div>
+                        <div class="truth-text">${lie.truth}</div>
+                    </div>
+                `).join('');
+            },
+
+            revealTruth(element) {
+                element.classList.toggle('revealed');
+            },
+
+            renderSequence() {
+                const container = document.getElementById('sequenceContainer');
+                container.innerHTML = this.state.sequence.map(line => `<div class="sequence-line">${line}</div>`).join('');
+            },
+
+            addBurden() {
+                const input = document.getElementById('burdenInput');
+                const text = input.value.trim();
+                if (!text) return;
+
+                this.state.burdens.push(text);
+                input.value = '';
+
+                const list = document.getElementById('burdenList');
+                const item = document.createElement('div');
+                item.className = 'burden-item';
+                item.innerHTML = `<span>${text}</span><button class="burden-action" onclick="app.releaseBurden(${this.state.burdens.length - 1}, this)">Release</button>`;
+                list.appendChild(item);
+            },
+
+            releaseBurden(idx, button) {
+                const burdenItem = button.closest('.burden-item');
+                this.state.burdens.splice(idx, 1);
+                setTimeout(() => burdenItem.remove(), 300);
+            },
+
+            renderSpeaksCards() {
+                const container = document.getElementById('speaksCards');
+                container.innerHTML = this.state.speaksData.map(item => `
+                    <div class="speak-card" onclick="app.toggleSpeakCard(this)">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div class="speak-icon">${item.icon}</div>
+                            <div class="speak-title">${item.title}</div>
+                        </div>
+                        <div class="speak-desc">${item.desc}</div>
+                    </div>
+                `).join('');
+            },
+
+            toggleSpeakCard(element) {
+                element.classList.toggle('expanded');
+            },
+
+            startTimer(seconds) {
+                if (this.state.timerActive) return;
+
+                document.querySelectorAll('.timer-btn').forEach(b => b.classList.remove('active'));
+                event.target.classList.add('active');
+
+                this.state.timerActive = true;
+                this.state.timerRemaining = seconds;
+                const display = document.getElementById('timerDisplay');
+                const section = document.getElementById('timerSection');
+
+                display.style.display = 'block';
+                this.updateTimerDisplay();
+
+                this.state.timerInterval = setInterval(() => {
+                    this.state.timerRemaining--;
+                    this.updateTimerDisplay();
+
+                    if (this.state.timerRemaining <= 0) {
+                        clearInterval(this.state.timerInterval);
+                        this.state.timerActive = false;
+                        display.style.display = 'none';
+                        section.style.display = 'block';
+                        document.querySelectorAll('.timer-btn').forEach(b => b.classList.remove('active'));
+                    }
+                }, 1000);
+            },
+
+            updateTimerDisplay() {
+                const mins = Math.floor(this.state.timerRemaining / 60);
+                const secs = this.state.timerRemaining % 60;
+                document.getElementById('timerText').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+            },
+
+            renderBoldSteps() {
+                const container = document.getElementById('boldSteps');
+                container.innerHTML = this.state.boldSteps.map((step, idx) => `
+                    <div class="step-option" onclick="app.selectBoldStep(${idx}, this)">
+                        <div class="step-icon">${step.icon}</div>
+                        <div class="step-text">${step.text}</div>
+                    </div>
+                `).join('');
+            },
+
+            selectBoldStep(idx, element) {
+                document.querySelectorAll('.step-option').forEach(s => s.classList.remove('selected'));
+                element.classList.add('selected');
+                this.state.selectedBoldStep = idx;
+            }
+        };
+
+        app.init();
+    </script>
+</body>
+</html>
